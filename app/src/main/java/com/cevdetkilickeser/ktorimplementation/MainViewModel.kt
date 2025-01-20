@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val apiClient: ApiClient
-) :ViewModel(){
+) : ViewModel() {
 
     var productList = MutableStateFlow<MainUiState<List<Product>>>(value = MainUiState.Loading())
         private set

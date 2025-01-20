@@ -22,13 +22,13 @@ class ApiClient {
     private val client: HttpClient = HttpClient(OkHttp) {
         defaultRequest { url("https://fakestoreapi.com/") }
 
-        install(Logging){
+        install(Logging) {
             logger = Logger.SIMPLE
             level = LogLevel.ALL
         }
 
-        install(ContentNegotiation){
-            json(Json{
+        install(ContentNegotiation) {
+            json(Json {
                 isLenient = true //Tırnak boşluk gibi hataları görmezden gel
                 ignoreUnknownKeys = true //Karşılık gelmeyen alanları görmezden gel, modelde olan kadarını dahil et
                 prettyPrint = true //Json çıktısı daha okunaklı
@@ -41,7 +41,7 @@ class ApiClient {
             socketTimeoutMillis = 15000L
         }
 
-        install(DefaultRequest){
+        install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
 
         }
@@ -56,23 +56,8 @@ class ApiClient {
     private inline fun <T> apiRequest(callback: () -> T): ApiResponse<T> {
         return try {
             ApiResponse.Success(data = callback())
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             ApiResponse.Error(error = e)
-        }
-    }
-
-    sealed interface ApiResponse<T>{
-        data class Success<T>(val data: T): ApiResponse<T>
-        data class Error<T>(val error: Exception): ApiResponse<T>
-
-        fun onSuccess(block: (T) -> Unit): ApiResponse<T>{
-            if(this is Success) block(data)
-            return this
-        }
-
-        fun onError(block: (Exception) -> Unit): ApiResponse<T>{
-            if(this is Error) block(error)
-            return this
         }
     }
 }
